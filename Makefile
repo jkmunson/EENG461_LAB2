@@ -60,7 +60,7 @@ app_info: $(BUILD_DIR)/${TARGET}.axf
 	arm-none-eabi-readelf -a $(^)
 
 %.pdf: docs/src/%.md Makefile
-	pandoc $< -o $@ --highlight-style tango --pdf-engine=xelatex 
+	pandoc $< -o $@ --highlight-style tango --pdf-engine=pdflatex 
 
 report: lab2_report.pdf
 

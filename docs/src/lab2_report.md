@@ -54,9 +54,7 @@ GPIO_PORTF_DATA_BITS_R[value1 | value2] = value1 | value2;
 <p></p>
 <p>In addition to the main routine, the project called for a switch to toggle the green LED without preempting or changing the 
 timing on the main loop. The switch was configured with an interrupt that triggered a subroutine that reads the bit at the 
-GPIO_PORTF_DATA_BITS_R address and inverts the state of the third bit, which corresponds to the green LED.</p>
-<p>The most challenging aspect of this project was a self-issued challenge of implementing an accurate debouncer without 
-the need for a second timer. </p>
+GPIO_PORTF_DATA_BITS_R address and inverts the state of the third bit, which corresponds to the green LED.</p>	
 
 The debouncing is implemented a bit different than we were shown to do; Instead of starting a timer at the rising edge, then reading the switch level after 10ms, we use the same timer for both tasks. 
 
@@ -68,8 +66,9 @@ The lab was completed with no major issues, and the goals met. We successfully u
 
 #### Appendix Code Outline and FSM   
 
-We prepared a FSM to describe the behaviour we were planning at the start.
-![Coding Outline](docs/src/EENG461_Lab2_FSM.png){ width=700px }
+We prepared a FSM to describe the behaviour we were planning at the start. See Figure 1.
+  
+![Coding Outline](docs/src/EENG461_Lab2_FSM.png){ width=600px }
     
 
 #### Appendix - main.h
