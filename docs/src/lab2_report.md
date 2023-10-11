@@ -14,16 +14,30 @@ In this lab we begin exploring interrupts and the concept of task scheduling. We
 Task scheduling is a nescessary part of real-time embedded systems that allows for many disparate activities to be completed in the appropriate order and at the appropriate time. The Prof indicated that his requirements are "just get interrupts working", so we did not implement a general-purpose task scheduler, like in the example code. We did, however, use interrupts to service the different tasks asynchronously. 
 
 #### Narrative
+The first step to any embedded system project is to understand the application and create the finite state machine 
+and/or pseudo-code. The finite state machine and pseduo-code provide a guideline in starting the development and coding process.
+<p>The code for this project starts with the initialization step, which includes configuring the GPIO ports, the timer module,
+and the accompanying interrupt masks and NVIC enables. The main loop consists of the finite state machine that starts with
+the blue LED being turned on, waiting for one second, turning on the red LED, waiting for two seconds, and then turning both
+the red and blue LEDs off for two seconds. The main FSM loops through in a 5 second period. The FSM requires a timer to keep
+time so that the intervals are accurate. To achieve this, a one-second, periodic timer was set-up with an attached timeout interupt
+that triggered an interrupt service routine to increment a second counter. Whenever the max period of five seconds was reached, the
+second counter was reset to zero. The code for changing the LEDs implemented a switch statement to choose the appropriate
+LED configuration based on what second the loop was currently on.</p>
+<p>In addition to the main routine, the project called for a switch to toggle the green LED without preempting or changing the
+timing on the main loop. The switch was configured with an interrupt that triggered a subroutine that would read the bit in the
+GPIO_PORTF_DATA_BITS_R address and invert the state of the third bit, which corresponds to the green LED.</p>
+<p>The most challenging aspect of this project was a self-issued challenge of implementing an accurate debouncer without 
+the need for a second timer. </p>
 
 #### Concluding Remarks
+
+#### Appendix - Code Outline and FSM
+![](EENG461_Lab2_FSM.png)
 
 #### Appendix - main.h
 ```c
 #pragma once
-//
-// Created by Mark Clark on 10/3/23.
-//
-
 #ifndef EENG461_LAB_2_MAIN_H
 #define EENG461_LAB_2_MAIN_H
 
@@ -36,10 +50,6 @@ void Enable_Interrupts(void);
 
 #### Appendix - main.c
 ```c
-//
-// Created by Mark Clark on 10/3/23.
-//
-
 #include "main.h"
 #include "setup.h"
 #include "timers.h"
@@ -234,9 +244,6 @@ static void sw1_debounce(void){
 
 #### Appendix - timers.h
 ```c
-//
-// Created by Mark Clark on 10/3/23.
-//
 #include "stdint.h"
 
 #ifndef EENG461_LAB_2_TIMERS_H
@@ -256,10 +263,6 @@ void timerISR (void);
 
 #### Appendix - timers.h
 ```c
-//
-// Created by Mark Clark on 10/3/23.
-//
-
 #include <stdint.h>
 #include "timers.h"
 #include "main.h"
