@@ -8,12 +8,15 @@ header-includes:
 ---
 
 #### Objective
+
 In this lab we begin exploring interrupts and the concept of task scheduling. We are to have two LEDS are to blink in a pattern, and another LED toggle with a button press, using debouncing.
 
 #### Introduction
+
 Task scheduling is a nescessary part of real-time embedded systems that allows for many disparate activities to be completed in the appropriate order and at the appropriate time. The Prof indicated that his requirements are "just get interrupts working", so we did not implement a general-purpose task scheduler, like in the example code. We did, however, use interrupts to service the different tasks asynchronously. 
 
 #### Narrative
+
 The first step to any embedded system project is to understand the application and create the finite state machine 
 and/or pseudo-code. The finite state machine and pseduo-code provide a guideline in starting the development and coding process.
 <p>The code for this project starts with the initialization step, which includes configuring the GPIO ports, the timer module,
@@ -30,12 +33,18 @@ GPIO_PORTF_DATA_BITS_R address and invert the state of the third bit, which corr
 <p>The most challenging aspect of this project was a self-issued challenge of implementing an accurate debouncer without 
 the need for a second timer. </p>
 
-#### Concluding Remarks
+#### Concluding Remarks  
 
-#### Appendix - Code Outline and FSM
-![](EENG461_Lab2_FSM.png)
+words
+
+#### Appendix Code Outline and FSM   
+.
+word   
+![caption](docs/src/EENG461_Lab2_FSM.png){ width=700px }
+word   
 
 #### Appendix - main.h
+
 ```c
 #pragma once
 #ifndef EENG461_LAB_2_MAIN_H
@@ -49,6 +58,7 @@ void Enable_Interrupts(void);
 ```
 
 #### Appendix - main.c
+
 ```c
 #include "main.h"
 #include "setup.h"
