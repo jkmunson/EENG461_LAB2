@@ -26,7 +26,7 @@ using logical operations, such as |= and &=. For instance, </p>
 ```c
 SYSCTL_RCGCGPIO_R |= (1 << 5);
 ```
-<p>sets bit 5 of the RCGCGPIO register to a 1, enabling GPIO Port F.</p>
+<p>Sets bit 5 of the RCGCGPIO register to a 1, enabling GPIO Port F.</p>
 <p>The main function consists of the finite state machine for the main routine, which starts with the blue LED being turned on, 
 waiting for one second, turning on the red LED, waiting for two seconds, and then turning both the red and blue LEDs off for two seconds. 
 The main routine has a 5-second period and loops infinitely. The main loop requires a timer to keep time so the intervals 
@@ -58,13 +58,17 @@ GPIO_PORTF_DATA_BITS_R address and inverts the state of the third bit, which cor
 <p>The most challenging aspect of this project was a self-issued challenge of implementing an accurate debouncer without 
 the need for a second timer. </p>
 
+The debouncing is implemented a bit different than we were shown to do; Instead of starting a timer at the rising edge, then reading the switch level after 10ms, we use the same timer for both tasks. 
+
+When the first edge change occurs, a button push down is registered immediately with no delay. If more edge changes are detected within 10ms then they are ignored. In order to differentiate between bounces that may occur on button release, the "state" of the button is tracked as either pushed or released. A valid release must be detected before a push can be registered, and vice-versa. In tracking the time passed since the button press, several potential race conditions are detected/corrected by disabling interrupts in a critical section and checking if the timer rolled over during the read. This method can debounce any number of switches with only a single hardware timer acting as a system time clock. Because handling these button presses is not time-critical, the edge change interrupt is set to the lowest priority level.
+
 #### Concluding Remarks  
 
-words
+The lab was completed with no major issues, and the goals met. We successfully used timers and interrupts to perform actions at specific times, as well as respond to events asynchronously.
 
 #### Appendix Code Outline and FSM   
-.
-    
+
+We prepared a FSM to describe the behaviour we were planning at the start.
 ![Coding Outline](docs/src/EENG461_Lab2_FSM.png){ width=700px }
     
 
