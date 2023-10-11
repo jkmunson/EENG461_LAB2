@@ -13,23 +13,48 @@ In this lab we begin exploring interrupts and the concept of task scheduling. We
 
 #### Introduction
 
-Task scheduling is a nescessary part of real-time embedded systems that allows for many disparate activities to be completed in the appropriate order and at the appropriate time. The Prof indicated that his requirements are "just get interrupts working", so we did not implement a general-purpose task scheduler, like in the example code. We did, however, use interrupts to service the different tasks asynchronously. 
+Task scheduling is a necessary part of real-time embedded systems that allows for many disparate activities to be completed in the appropriate order and at the appropriate time. The Prof indicated that his requirements are "just get interrupts working", so we did not implement a general-purpose task scheduler, like in the example code. We did, however, use interrupts to service the different tasks asynchronously. 
 
 #### Narrative
 
-The first step to any embedded system project is to understand the application and create the finite state machine 
-and/or pseudo-code. The finite state machine and pseduo-code provide a guideline in starting the development and coding process.
-<p>The code for this project starts with the initialization step, which includes configuring the GPIO ports, the timer module,
-and the accompanying interrupt masks and NVIC enables. The main loop consists of the finite state machine that starts with
-the blue LED being turned on, waiting for one second, turning on the red LED, waiting for two seconds, and then turning both
-the red and blue LEDs off for two seconds. The main FSM loops through in a 5 second period. The FSM requires a timer to keep
-time so that the intervals are accurate. To achieve this, a one-second, periodic timer was set-up with an attached timeout interupt
-that triggered an interrupt service routine to increment a second counter. Whenever the max period of five seconds was reached, the
-second counter was reset to zero. The code for changing the LEDs implemented a switch statement to choose the appropriate
-LED configuration based on what second the loop was currently on.</p>
-<p>In addition to the main routine, the project called for a switch to toggle the green LED without preempting or changing the
-timing on the main loop. The switch was configured with an interrupt that triggered a subroutine that would read the bit in the
-GPIO_PORTF_DATA_BITS_R address and invert the state of the third bit, which corresponds to the green LED.</p>
+<p>The first step to any embedded system project is to understand the application and create the coding-outline, finite state machines 
+and/or pseudocode. The coding-outline, finite state machines, and pseudocode provide a guideline in starting the development and coding process.</p>
+<p>The code for this project starts with the initialization step, which includes configuring the GPIO ports, the timer module, 
+and the accompanying interrupt masks and NVIC enables. The code for this project utilizes direct register manipulations 
+using logical operations, such as |= and &=. For instance, </p>
+
+```c
+SYSCTL_RCGCGPIO_R |= (1 << 5);
+```
+<p>sets bit 5 of the RCGCGPIO register to a 1, enabling GPIO Port F.</p>
+<p>The main function consists of the finite state machine for the main routine, which starts with the blue LED being turned on, 
+waiting for one second, turning on the red LED, waiting for two seconds, and then turning both the red and blue LEDs off for two seconds. 
+The main routine has a 5-second period and loops infinitely. The main loop requires a timer to keep time so the intervals 
+are accurate. To achieve the proper timing, a one-second, periodic timer was configured with an attached timeout interrupt 
+that triggered an interrupt service routine to increment a second counter. Whenever the max period of five seconds is reached, the 
+second counter resets to zero. In order to set the correct timer period, the number of cycles/ticks required was calculated 
+using the formula: </p>
+
+`$$cycles = (desiredSeconds)\cdot (clkFrequency)$$`
+
+<p>The code for changing the LEDs is a simple switch statement that chooses the appropriate 
+LED configuration based on what second of the loop it is currently on. The LEDs are toggled on and off using the register 
+at the GPIO_PORTF_DATA_BITS_R address. The simplest way to alter the value of a bit was found to be using the syntax: </p>
+
+```c 
+GPIO_PORTF_DATA_BITS_R[value] = value;
+// value is the hex value corresposding to the bit/s you want to set. (i.e. bit #1 is 0x01 or (1 << 1))
+```
+
+<p>The syntax also supports bitwise or and bitwise and operations in the value location to mix known values together as follows:</p>
+
+```c
+GPIO_PORTF_DATA_BITS_R[value1 | value2] = value1 | value2;
+```
+<p></p>
+<p>In addition to the main routine, the project called for a switch to toggle the green LED without preempting or changing the 
+timing on the main loop. The switch was configured with an interrupt that triggered a subroutine that reads the bit at the 
+GPIO_PORTF_DATA_BITS_R address and inverts the state of the third bit, which corresponds to the green LED.</p>
 <p>The most challenging aspect of this project was a self-issued challenge of implementing an accurate debouncer without 
 the need for a second timer. </p>
 
@@ -39,9 +64,9 @@ words
 
 #### Appendix Code Outline and FSM   
 .
-word   
-![caption](docs/src/EENG461_Lab2_FSM.png){ width=700px }
-word   
+    
+![Coding Outline](docs/src/EENG461_Lab2_FSM.png){ width=700px }
+    
 
 #### Appendix - main.h
 
